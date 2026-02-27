@@ -1,0 +1,34 @@
+body {
+  background: #fff;
+  color: #000;
+  font-family: monospace;
+  text-align: center;
+}
+
+#skeleton {
+  display: grid;
+  grid-template-columns: repeat(3, 80px);
+  gap: 10px;
+  justify-content: center;
+  margin-top: 40px;
+}
+
+.bone {
+  width: 80px;
+  height: 80px;
+  border: 1px solid black;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+}
+
+.bone.active {
+  color: red;
+  border-color: red;
+}
+
+.head {
+  opacity: 0.3;
+  cursor: not-allowed;
+}
