@@ -334,7 +334,7 @@ svg.bone.head {
 @media (max-width: 768px) {
   #skeleton-inner {
  transform-origin: bottom center;
-    transform: scale(0.16) translateY(6%);
+    transform: scale(0.16) translateY(5%);
   }
 }
 
