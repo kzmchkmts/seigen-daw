@@ -3,6 +3,8 @@
 ========================= */
 
 
+
+
 const audioBank = [
   {
     id: "AomorikenHirakawashi_Senkotsu_202556",
@@ -203,7 +205,7 @@ document
 function startPlayback() {
 
   closeAudioPanel();
-  
+
   if (isPlaying) return;
 
   isPlaying = true;
@@ -281,6 +283,8 @@ function actuallyPlayAll() {
 
 
 function updateProgress() {
+
+    ensureProgressWrapper(); 
   const assignedCount = Object.values(boneAssignments)
     .filter(a => a !== null).length;
 
@@ -291,4 +295,28 @@ function updateProgress() {
 
   bar.style.width = `${percent}%`;
   text.textContent = `${percent}%`;
+
+  if (!bar || !text) return; // 念のための保険
+
+  bar.style.width = `${percent}%`;
+  text.textContent = `${assignedCount} / 7 (${percent}%)`;
+}
+
+
+
+
+function ensureProgressWrapper() {
+  let wrapper = document.getElementById("progress-wrapper");
+  if (wrapper) return wrapper;
+
+  wrapper = document.createElement("div");
+  wrapper.id = "progress-wrapper";
+  wrapper.innerHTML = `
+    <div id="progress-bar-bg">
+      <div id="progress-bar"></div>
+    </div>
+    <div id="progress-text">0 / 7 (0%)</div>
+  `;
+  document.body.appendChild(wrapper);
+  return wrapper;
 }
