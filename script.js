@@ -324,5 +324,3 @@ function ensureProgressWrapper() {
 
 
 
-window.addEventListener("resize", updateSkeletonScale);
-updateSkeletonScale();
