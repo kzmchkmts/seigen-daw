@@ -3,20 +3,10 @@
 ========================= */
 
 const audioBank = [
-  {
-    id: "AomorikenHirakawashi_Senkotsu_202556",
-    file: "audio/AomorikenHirakawashi_Senkotsu_202556.mp3"
-  },
-  {
-    id: "OsakaNakatsu_weather_zekkotsu_20250427",
-    file: "audio/OsakaNakatsu_weather_zekkotsu_20250427.mp3"
-  },
-  {
-    id: "TokyoKitakuAkabanekita_Nozomu_Rokkotu_20250427",
-    file: "audio/TokyoKitakuAkabanekita_Nozomu_Rokkotu_20250427.mp3"
-  }
+  { id: "AomorikenHirakawashi_Senkotsu_202556", file: "audio/AomorikenHirakawashi_Senkotsu_202556.mp3" },
+  { id: "OsakaNakatsu_weather_zekkotsu_20250427", file: "audio/OsakaNakatsu_weather_zekkotsu_20250427.mp3" },
+  { id: "TokyoKitakuAkabanekita_Nozomu_Rokkotu_20250427", file: "audio/TokyoKitakuAkabanekita_Nozomu_Rokkotu_20250427.mp3" }
 ];
-
 
 /* =========================
    ASSIGNMENT STATE
@@ -32,7 +22,6 @@ const boneAssignments = {
   "bone-7": null
 };
 
-
 /* =========================
    GLOBAL STATE
 ========================= */
@@ -44,23 +33,49 @@ let previewTimer = null;
 
 let playingAudios = [];
 let playbackTimer = null;
-let isPlaying = false;
 
+let uiLocked = false;
+let readyToPlay = false;
 
 /* =========================
-   INIT : BONE CLICK
+   BOOTSTRAP
 ========================= */
 
-document.querySelectorAll(".bone").forEach(bone => {
-  bone.addEventListener("click", () => {
-    if (isPlaying) return;
-    if (bone.id === "bone-8") return;
+document.addEventListener("DOMContentLoaded", () => {
 
-    selectedBone = bone.id;
-    openAudioPanel();
+  // ① 骨クリック登録
+  document.querySelectorAll(".bone").forEach(bone => {
+    bone.addEventListener("click", () => {
+      if (uiLocked) return;
+      if (bone.id === "bone-8") return;
+      selectedBone = bone.id;
+      openAudioPanel();
+    });
   });
-});
 
+  // ② 下部の再生ボタン → ローディング開始
+  document
+    .getElementById("play-button")
+    .addEventListener("click", () => {
+      if (uiLocked) return;
+      startLoadingPhase();
+    });
+
+  // ③ ★ ここ！！ overlay 内の最終再生ボタン
+  document
+    .getElementById("overlay-play-button")
+    .addEventListener("click", () => {
+      document
+        .getElementById("loading-overlay")
+        .classList.add("hidden");
+
+      playingAudios.forEach(a => {
+        a.currentTime = 0;
+        a.play().catch(() => {});
+      });
+    });
+
+});
 
 /* =========================
    AUDIO PANEL
@@ -78,17 +93,25 @@ function openAudioPanel() {
     const li = document.createElement("li");
 
     const label = document.createElement("span");
+    label.className = "audio-id";
     label.textContent = audio.id;
 
+    const controls = document.createElement("div");
+    controls.className = "audio-controls";
+
     const previewBtn = document.createElement("button");
-    previewBtn.textContent = "▶ preview";
+    previewBtn.textContent = "▶︎ preview";
     previewBtn.onclick = () => playPreview(audio);
 
     const assignBtn = document.createElement("button");
     assignBtn.textContent = "✔ assign";
     assignBtn.onclick = () => assignAudioToBone(selectedBone, audio);
 
-    li.append(label, previewBtn, assignBtn);
+    controls.appendChild(previewBtn);
+    controls.appendChild(assignBtn);
+
+    li.appendChild(label);
+    li.appendChild(controls);
     list.appendChild(li);
   });
 
@@ -100,6 +123,14 @@ function closeAudioPanel() {
   selectedBone = null;
 }
 
+// パネル外クリックで閉じる
+document.addEventListener("click", (e) => {
+  const panel = document.getElementById("audio-panel");
+  if (panel.classList.contains("hidden")) return;
+  if (panel.contains(e.target)) return;
+  if (e.target.closest(".bone")) return;
+  closeAudioPanel();
+});
 
 /* =========================
    PREVIEW
@@ -109,17 +140,23 @@ function playPreview(audio) {
   stopPreview();
 
   previewAudio = new Audio(audio.file);
+  previewAudio.currentTime = 0;
   previewAudio.play().catch(() => {});
+
   previewTimer = setTimeout(stopPreview, 10000);
 }
 
 function stopPreview() {
-  if (!previewAudio) return;
-  previewAudio.pause();
-  previewAudio = null;
-  clearTimeout(previewTimer);
+  if (previewAudio) {
+    previewAudio.pause();
+    previewAudio.currentTime = 0;
+    previewAudio = null;
+  }
+  if (previewTimer) {
+    clearTimeout(previewTimer);
+    previewTimer = null;
+  }
 }
-
 
 /* =========================
    ASSIGN
@@ -129,92 +166,57 @@ function assignAudioToBone(boneId, audio) {
   if (!boneId) return;
 
   boneAssignments[boneId] = audio;
-  document.getElementById(boneId)?.classList.add("assigned");
+  document.getElementById(boneId).classList.add("assigned");
 
   updateProgress();
   checkPlaybackReady();
   closeAudioPanel();
 }
 
-
 /* =========================
    PROGRESS
 ========================= */
 
 function updateProgress() {
-  ensureProgressWrapper();
-
   const assigned = Object.values(boneAssignments).filter(Boolean).length;
   const percent = Math.round((assigned / 7) * 100);
 
-  document.getElementById("progress-bar").style.width = `${percent}%`;
-  document.getElementById("progress-text").textContent =
-    `${assigned} / 7 (${percent}%)`;
+  const bar = document.getElementById("progress-bar");
+  const text = document.getElementById("progress-text");
+
+  bar.style.width = `${percent}%`;
+  text.textContent = `${assigned} / 7 (${percent}%)`;
 }
-
-function ensureProgressWrapper() {
-  if (document.getElementById("progress-wrapper")) return;
-
-  const div = document.createElement("div");
-  div.id = "progress-wrapper";
-  div.innerHTML = `
-    <div id="progress-bar-bg">
-      <div id="progress-bar"></div>
-    </div>
-    <div id="progress-text">0 / 7 (0%)</div>
-  `;
-  document.body.appendChild(div);
-}
-
-
-/* =========================
-   READY CHECK
-========================= */
 
 function checkPlaybackReady() {
-  if (!Object.values(boneAssignments).every(Boolean)) return;
-
-  const playBtn = document.getElementById("play-button");
-  playBtn.classList.remove("hidden");
-  playBtn.classList.add("ready");
-  playBtn.disabled = false;
-  playBtn.textContent = "▶ 再生を開始";
-
-  showReadyMessage();
+  if (Object.values(boneAssignments).every(Boolean)) {
+    const playBtn = document.getElementById("play-button");
+    playBtn.classList.remove("hidden");
+    playBtn.textContent = "▶ 再生を開始";
+  }
 }
-
-function showReadyMessage() {
-  let msg = document.getElementById("ready-message");
-  if (msg) return;
-
-  msg = document.createElement("div");
-  msg.id = "ready-message";
-  msg.textContent = "準備完了・再生をタップしてください";
-  document.body.appendChild(msg);
-}
-
 
 /* =========================
-   PLAYBACK
+   LOADING PHASE
 ========================= */
 
-document.getElementById("play-button")
-  .addEventListener("click", startPlayback);
-
-function startPlayback() {
-  if (isPlaying) return;
-  isPlaying = true;
-
-  stopPreview();
-  closeAudioPanel();
+function startLoadingPhase() {
+  uiLocked = true;
 
   const overlay = document.getElementById("loading-overlay");
-  const loadingText = document.getElementById("loading-progress");
+  const loadingText = document.getElementById("loading-text");
+  const progressText = document.getElementById("loading-progress");
+  const overlayPlayBtn = document.getElementById("overlay-play-button");
 
   overlay.classList.remove("hidden");
+  overlayPlayBtn.classList.add("hidden");
+
+  loadingText.textContent = "音源を読み込んでいます…";
+  progressText.textContent = "0 / 7";
 
   playingAudios = [];
   let loaded = 0;
+  const total = 7;
 
   Object.values(boneAssignments).forEach(audio => {
     const a = new Audio(audio.file);
@@ -222,11 +224,13 @@ function startPlayback() {
 
     a.addEventListener("canplaythrough", () => {
       loaded++;
-      loadingText.textContent = `${loaded} / 7`;
+      progressText.textContent = `${loaded} / ${total}`;
 
-      if (loaded === 7) {
-        overlay.classList.add("hidden");
-        actuallyPlayAll();
+      if (loaded === total) {
+        // ★ 準備完了状態
+        loadingText.textContent = "準備完了：再生をタップしてください";
+        overlayPlayBtn.classList.remove("hidden");
+        uiLocked = false;
       }
     }, { once: true });
 
@@ -234,17 +238,38 @@ function startPlayback() {
   });
 }
 
-function actuallyPlayAll() {
-  const playBtn = document.getElementById("play-button");
-  playBtn.disabled = true;
-  playBtn.classList.remove("ready");
-  playBtn.textContent = "再生中…";
+/* =========================
+   ACTUAL PLAYBACK
+========================= */
 
-  playingAudios.forEach(a => a.play().catch(() => {}));
+function startActualPlayback() {
+  if (!readyToPlay) return;
+
+  readyToPlay = false;
+  uiLocked = true;
+
+  document.getElementById("loading-overlay").classList.add("hidden");
+  document.getElementById("overlay-play-button").classList.add("hidden");
+
+  playingAudios.forEach(a => {
+    a.currentTime = 0;
+    a.play().catch(() => {});
+  });
+
   playbackTimer = setTimeout(stopPlayback, 300000);
 }
 
+/* =========================
+   STOP
+========================= */
+
 function stopPlayback() {
-  playingAudios.forEach(a => a.pause());
-  isPlaying = false;
+  if (playbackTimer) clearTimeout(playbackTimer);
+
+  playingAudios.forEach(a => {
+    a.pause();
+    a.currentTime = 0;
+  });
+
+  uiLocked = false;
 }
