@@ -249,12 +249,6 @@ svg.bone.head {
 }
 
 
-#progress-wrapper {
-  top: 0 !important;
-  left: 0 !important;
-  transform: none !important;
-  background: lime; /* デバッグ用 */
-}
 
 
 
