@@ -288,48 +288,44 @@ svg.bone.head {
   position: fixed;
   inset: 0;
   background: rgba(0,0,0,0.85);
-  color: white;
   z-index: 9999;
 
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
+
+  color: white;
 }
 
 #loading-overlay.hidden {
   display: none;
 }
 
+/* 準備完了テキスト */
 #loading-text {
   font-size: 16px;
   margin-bottom: 12px;
 }
 
+/* 進捗 */
 #loading-progress {
   font-size: 14px;
+  margin-bottom: 24px;
 }
 
-
-/* 準備完了時：再生ボタンを中央に浮かせる */
-#play-button.ready {
-  position: fixed;
-  left: 50%;
-  bottom: 20%;
-  transform: translateX(-50%);
-  z-index: 2000;
-
+/* 最終再生ボタン */
+#overlay-play-button {
+  padding: 14px 26px;
+  font-size: 16px;
   background: red;
   color: white;
-  font-size: 16px;
-  padding: 12px 20px;
   border: none;
+  cursor: pointer;
 }
 
-@keyframes pulse {
-  0% { opacity: 1; }
-  50% { opacity: 0.6; }
-  100% { opacity: 1; }
+#overlay-play-button.hidden {
+  display: none;
 }
 
 
