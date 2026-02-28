@@ -310,14 +310,36 @@ svg.bone.head {
 }
 
 
+/* 準備完了時：再生ボタンを中央に浮かせる */
+#play-button.ready {
+  position: fixed;
+  left: 50%;
+  bottom: 20%;
+  transform: translateX(-50%);
+  z-index: 2000;
+
+  background: red;
+  color: white;
+  font-size: 16px;
+  padding: 12px 20px;
+  border: none;
+}
+
+@keyframes pulse {
+  0% { opacity: 1; }
+  50% { opacity: 0.6; }
+  100% { opacity: 1; }
+}
+
+
+
+
 @media (max-width: 768px) {
   #skeleton-inner {
  transform-origin: bottom center;
     transform: scale(0.16) translateY(6%);
   }
 }
-
-
 
 /*
 svg.bone {
