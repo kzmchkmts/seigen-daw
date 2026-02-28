@@ -257,7 +257,7 @@ svg.bone.head {
   top: 50px;
   transform: translateX(-40%);
   width: 240px;
-  z-index: 1000;
+  z-index: 5000;
   text-align: center;
 }
 
