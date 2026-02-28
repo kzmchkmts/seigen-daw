@@ -43,39 +43,64 @@ let readyToPlay = false;
 
 document.addEventListener("DOMContentLoaded", () => {
 
-  // ① 骨クリック登録
+  /* =========================
+     ① 骨クリック登録
+  ========================= */
   document.querySelectorAll(".bone").forEach(bone => {
     bone.addEventListener("click", () => {
       if (uiLocked) return;
       if (bone.id === "bone-8") return;
+
       selectedBone = bone.id;
       openAudioPanel();
     });
   });
 
-  // ② 下部の再生ボタン → ローディング開始
-  document
-    .getElementById("play-button")
-    .addEventListener("click", () => {
+  /* =========================
+     ② 下部の再生ボタン → ローディング開始
+        （※ 最終再生ではない）
+  ========================= */
+  const playBtn = document.getElementById("play-button");
+  if (playBtn) {
+    playBtn.addEventListener("click", () => {
       if (uiLocked) return;
       startLoadingPhase();
     });
+  }
 
-  // ③ ★ ここ！！ overlay 内の最終再生ボタン
-  document
-    .getElementById("overlay-play-button")
-    .addEventListener("click", () => {
-      document
-        .getElementById("loading-overlay")
-        .classList.add("hidden");
+  /* =========================
+     ③ overlay 内の最終再生ボタン
+        （ここが「決断の一押し」）
+  ========================= */
+  const overlayPlayBtn = document.getElementById("overlay-play-button");
+  if (overlayPlayBtn) {
+    overlayPlayBtn.addEventListener("click", () => {
 
+      // overlay を消す
+      const overlay = document.getElementById("loading-overlay");
+      if (overlay) overlay.classList.add("hidden");
+
+      // ★ 元画面の再生ボタンを完全に消す
+      if (playBtn) {
+        playBtn.classList.add("hidden");
+        playBtn.disabled = true;
+      }
+
+      // 実際の再生開始
       playingAudios.forEach(a => {
         a.currentTime = 0;
         a.play().catch(() => {});
       });
+
+      // UIロック（再生中）
+      uiLocked = true;
     });
+  }
 
 });
+
+
+
 
 /* =========================
    AUDIO PANEL
