@@ -64,6 +64,12 @@ h1 {
 }
 
 
+/* モバイルだけ少し小さく */
+@media (max-width: 768px) {
+  #skeleton-inner {
+    transform: scale(0.16);
+  }
+}
 
 
 
