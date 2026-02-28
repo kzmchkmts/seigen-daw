@@ -283,7 +283,7 @@ function actuallyPlayAll() {
 
 
 function updateProgress() {
-
+console.log("updateProgress called");
     ensureProgressWrapper(); 
   const assignedCount = Object.values(boneAssignments)
     .filter(a => a !== null).length;
