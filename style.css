@@ -252,7 +252,7 @@ svg.bone.head {
 #progress-wrapper {
   position: fixed;
   left: 50%;
-  top: 20px;
+  top: 10px;
   transform: translateX(-40%);
   width: 240px;
   z-index: 5000;
@@ -334,7 +334,7 @@ svg.bone.head {
 @media (max-width: 768px) {
   #skeleton-inner {
  transform-origin: bottom center;
-    transform: scale(0.15) translateY(6%);
+    transform: scale(0.14) translateY(6%);
   }
 }
 
