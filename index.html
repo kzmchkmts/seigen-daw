@@ -1,8 +1,9 @@
 <html lang="ja">
- 
+  
 <head>
-   <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
   <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>BONE DEMO</title>
   <link rel="stylesheet" href="style.css">
 </head>
@@ -739,8 +740,7 @@
 
 
 
-
- <div id="progress-wrapper">
+<div id="progress-wrapper">
   <div id="progress-bar-bg">
     <div id="progress-bar"></div>
   </div>
@@ -753,9 +753,12 @@
 <div id="loading-overlay" class="hidden">
   <div id="loading-text">音源を読み込んでいます…</div>
   <div id="loading-progress">0 / 7</div>
+
+  <!-- ★ 最終再生ボタンは overlay 内だけ -->
+  <button id="overlay-play-button" class="hidden">
+    ▶ 再生を開始
+  </button>
 </div>
-
-
 
 
 <script src="script.js" defer></script>
