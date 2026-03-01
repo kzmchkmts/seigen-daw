@@ -33,26 +33,25 @@ h1 {
 ========================= */
 
 #skeleton-scale {
-  position: relative;   /* ← fixed をやめる */
+  position: absolute;
   width: 100vw;
-  height: 100svh;       /* ← iOS用 “実表示高さ” */
+  height: 100svh;
   display: flex;
   justify-content: center;
-  align-items: center;  /* ← 中央基準 */
-  overflow: hidden;
-    pointer-events: auto;
 }
 
 #skeleton {
-  position: absolute;
-  left: 50%;
-  bottom: 0;
-    transform: translateX(-50%);
+  position: relative;
+  width: 1000px;     /* ← 実サイズを固定で与える */
+  height: 1000px;   /* ← 骨全身が収まる高さ */
+  transform: scale(0.25);
+  transform-origin: bottom center;
+  
+
 }
 
-#skeleton-inner {
-  transform-origin: bottom center;
-  transform: scale(0.25) translateY(8%);
+#skeleton-inner { 
+ 
 }
 
 
@@ -334,10 +333,16 @@ svg.bone.head {
 
 
 
+
+@media (max-width: 1024px) {
+  #skeleton {
+    transform: scale(0.21);
+  }
+}
+
 @media (max-width: 768px) {
-  #skeleton-inner {
- transform-origin: bottom center;
-    transform: scale(0.14) translateY(6%);
+  #skeleton {
+    transform: scale(0.14);
   }
 }
 
