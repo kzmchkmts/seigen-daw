@@ -33,42 +33,43 @@ h1 {
 ========================= */
 
 #skeleton-scale {
-  position: absolute;
-  width: 100vw;
-  height: 100svh;
+  position: relative;
+ height: 100svh;
+  overflow-y: auto;
   display: flex;
   justify-content: center;
+  padding-top: 5vh; /* ← ここで下基準を演出 */
 }
 
-#skeleton {
-  position: relative;
-  width: 1000px;     /* ← 実サイズを固定で与える */
-  height: 1000px;   /* ← 骨全身が収まる高さ */
+#skeleton { 
+  margin-top: auto; 
+  position:relative;
+  width: 400px;  
+  height:700px;   /* ← 実サイズを固定で与える */
+  /* ← 骨全身が収まる高さ */
+
   transform: scale(0.25);
   transform-origin: bottom center;
-  
 
 }
 
-#skeleton-inner { 
- 
-}
+
 
 
 
 
 #bone-1 {
-  position: absolute;
+position: absolute;
   left: 50%;
-  bottom: 300px;
-  transform: translateX(-100px);
+  bottom: 0px;
+  transform: translateX(-110px);
   width: 450px;
 }
 
 #bone-2{
   position: absolute;
  left: 50%;
-  bottom: 700px;
+  bottom: 400px;
   transform: translateX(-65px);
   width: 150px;
 }
@@ -76,7 +77,7 @@ h1 {
 #bone-3{
   position: absolute;
  left: 50%;
-  bottom: 700px;
+  bottom: 400px;
   transform: translateX(145px);
   width: 150px;
 }
@@ -85,7 +86,7 @@ h1 {
 #bone-4{
   position: absolute;
  left: 50%;
-  bottom: 1800px;
+  bottom: 1500px;
   transform: translateX(-110px);
   width: 440px;
 }
@@ -94,7 +95,7 @@ h1 {
 #bone-5{
   position: absolute;
  left: 50%;
-  bottom: 1900px;
+  bottom: 1600px;
   transform: translateX(-300px);
   width: 120px;
 }
@@ -103,7 +104,7 @@ h1 {
 #bone-6 {
   position: absolute;
   left: 50%;
-  bottom: 1900px;
+  bottom: 1600px;
   transform: translateX(350px);
   width: 150px;
  
@@ -114,7 +115,7 @@ h1 {
   position: absolute;
  left: 50%;
  transform: translateX(-90px); 
-  bottom: 2300px;
+  bottom: 2000px;
   width: 400px;
   
 }
@@ -123,7 +124,7 @@ h1 {
 #bone-8{
   position: absolute;
   left: 50%;
-  bottom: 3000px;
+  bottom: 2650px;
   transform: translateX(0px);
   width: 200px;
 }
@@ -342,7 +343,7 @@ svg.bone.head {
 
 @media (max-width: 768px) {
   #skeleton {
-    transform: scale(0.14);
+    transform: scale(0.16);
   }
 }
 
