@@ -4,7 +4,10 @@
 
 const audioBank = [
   { id: "AomorikenHirakawashi_Senkotsu_202556", file: "audio/AomorikenHirakawashi_Senkotsu_202556.mp3" },
-  { id: "OsakaNakatsu_weather_zekkotsu_20250427", file: "audio/OsakaNakatsu_weather_zekkotsu_20250427.mp3" },
+  { id: "ChofushiSengawa_reiji_senkotsu_unknown", file: "audio/ChofushiSengawa_reiji_senkotsu.mp3" },
+  { id: "Nerimaku_kuko_zentoukotsu_20250202", file: "audio/Nerimaku_kuko_zentoukotsu_20250202.mp3" },
+  { id: "Shimokyoku_Tachibana_sekitsuikotsu_20250201 ", file: "audio/shimokyoku_Tachibana_sekitsuikotsu_20250201 .mp3" },
+  { id: "Shizuokakengotenbashi_hozuku_hidarikoyubi_20250131", file: "audio/Shizuokakengotenbashi_hozuku_hidarikoyubi_20250131.mp3" },
   { id: "TokyoKitakuAkabanekita_Nozomu_Rokkotu_20250427", file: "audio/TokyoKitakuAkabanekita_Nozomu_Rokkotu_20250427.mp3" }
 ];
 
@@ -98,9 +101,6 @@ document.addEventListener("DOMContentLoaded", () => {
   }
 
 });
-
-
-
 
 /* =========================
    AUDIO PANEL
@@ -298,3 +298,49 @@ function stopPlayback() {
 
   uiLocked = false;
 }
+
+
+
+
+(function enableAudioPanelDrag() {
+  const panel = document.getElementById("audio-panel");
+  if (!panel) return;
+
+  let isDragging = false;
+  let startX, startY, startLeft, startTop;
+
+  panel.addEventListener("mousedown", (e) => {
+    // ボタン押下は無視（誤操作防止）
+    if (e.target.tagName === "BUTTON") return;
+
+    isDragging = true;
+    startX = e.clientX;
+    startY = e.clientY;
+
+    const rect = panel.getBoundingClientRect();
+    startLeft = rect.left;
+    startTop = rect.top;
+
+    panel.style.right = "auto";
+    panel.style.bottom = "auto";
+    panel.style.left = `${startLeft}px`;
+    panel.style.top = `${startTop}px`;
+
+    panel.style.cursor = "grabbing";
+  });
+
+  document.addEventListener("mousemove", (e) => {
+    if (!isDragging) return;
+
+    const dx = e.clientX - startX;
+    const dy = e.clientY - startY;
+
+    panel.style.left = `${startLeft + dx}px`;
+    panel.style.top = `${startTop + dy}px`;
+  });
+
+  document.addEventListener("mouseup", () => {
+    isDragging = false;
+    panel.style.cursor = "default";
+  });
+})();
