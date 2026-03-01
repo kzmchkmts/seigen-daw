@@ -38,7 +38,7 @@ h1 {
   overflow-y: auto;
   display: flex;
   justify-content: center;
-  padding-top: 5vh; /* ← ここで下基準を演出 */
+  padding-top: 20vh; /* ← ここで下基準を演出 */
 }
 
 #skeleton { 
