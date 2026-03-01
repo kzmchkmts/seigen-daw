@@ -729,7 +729,7 @@
 
 
 <div id="audio-panel" class="hidden">
-  <h3 id="audio-panel-title">SELECT AUDIO </h3>
+  <h3 id="audio-panel-title">SELECT AUDIO (5 min preview) </h3>
   <ul id="audio-list"></ul>
 </div>
 
@@ -759,6 +759,37 @@
     ▶ 再生を開始
   </button>
 </div>
+
+
+
+
+<!-- 録音メタ情報入力 -->
+<div id="record-meta" class="hidden">
+  <h2>録音情報を入力してください</h2>
+
+  <label>
+    name:
+    <input type="text" id="meta-name">
+  </label>
+
+  <label>
+    location:
+    <input type="text" id="meta-location">
+  </label>
+
+  <label>
+    bone name:
+    <input type="text" id="meta-bone">
+  </label>
+
+  <button id="upload-button">アップロード</button>
+
+  <div id="upload-status"></div>
+  <div id="upload-bar-bg">
+    <div id="upload-bar"></div>
+  </div>
+</div>
+
 
 
 <script src="script.js" defer></script>
