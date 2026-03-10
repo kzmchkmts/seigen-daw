@@ -5,7 +5,7 @@
 const audioBank = [
   { id: "AomorikenHirakawashi_Senkotsu_202556", file: "audio/AomorikenHirakawashi_Senkotsu_202556.mp3" },
   { id: "AomorikenHirakawashi_Senkotsu_202556", file: "audio/AomorikenHirakawashi_Senkotsu_202556.mp3" },
-  { id: "AomorikenHirakawashi_Senkotsu_202556", file: "audio/AomorikenHirakawashi_Senkotsu_202556.mp3" },
+  { id: "OsakaNakatsu_weather_zekkotsu_20250427", file: "audio/OsakaNakatsu_weather_zekkotsu_20250427.mp3" },
   { id: "ChofushiSengawa_reiji_senkotsu_unknown", file: "audio/ChofushiSengawa_reiji_senkotsu.mp3" },
   { id: "Nerimaku_kuko_zentoukotsu_20250202", file: "audio/Nerimaku_kuko_zentoukotsu_20250202.mp3" },
   { id: "Shimokyoku_Tachibana_sekitsuikotsu_20250201 ", file: "audio/shimokyoku_Tachibana_sekitsuikotsu_20250201 .mp3" },
@@ -50,7 +50,7 @@ let recordedMime = "";
 let recordedExt = "webm"; // default
 
 // 5min fixed
-const FIXED_MS = 10000; // 10秒
+const FIXED_MS = 300000; // 5分
 
 /* =========================
    DOM HELPERS
@@ -366,10 +366,12 @@ async function startPlaybackAndRecording() {
   }
 
   // UI完全ロック（録音中表示で覆う）
-  lockUIWithOverlay("録音中です（10秒間）", "ページを閉じないでください");
+  lockUIWithOverlay("録音中です（5分間）", "ページを閉じないでください");
 
   // 1) 録音開始（許可ダイアログもここで出る）
   await startRecording();
+
+  startHeadEmergence(); // ←追加
 
   // 2) 再生開始（同じジェスチャ内で呼ぶのが重要）
   playingAudios.forEach(a => {
@@ -477,7 +479,17 @@ function uploadRecordingWithMeta() {
     return;
   }
 
-  const filename = `${name}_${location}_${bone}.${recordedExt}`;
+const now = new Date();
+const timestamp =
+  now.getFullYear() +
+  String(now.getMonth()+1).padStart(2,"0") +
+  String(now.getDate()).padStart(2,"0") +
+  "-" +
+  String(now.getHours()).padStart(2,"0") +
+  String(now.getMinutes()).padStart(2,"0") +
+  String(now.getSeconds()).padStart(2,"0");
+
+const filename = `${name}_${location}_${bone}_${timestamp}.${recordedExt}`;
 
   // UI: アップロード中
   uiLocked = true;
@@ -493,7 +505,11 @@ function uploadRecordingWithMeta() {
 
   // ★ここがサーバー側エンドポイント
   // 自前サーバーなら /upload を用意
-  xhr.open("POST", "/upload", true);
+xhr.open(
+  "POST",
+  "https://calm-math-512e.madegg0.workers.dev",
+  true
+);
 
   xhr.upload.onprogress = (e) => {
     if (!e.lengthComputable) return;
@@ -602,4 +618,22 @@ function saveBlobLocally(blob, ext) {
     URL.revokeObjectURL(url);
     a.remove();
   }, 100);
+}
+
+
+
+
+
+
+
+
+
+function startHeadEmergence() {
+
+  const head = document.getElementById("bone-8");
+  if (!head) return;
+
+  head.style.transition = `opacity ${FIXED_MS}ms linear`;
+  head.style.opacity = 1;
+
 }
