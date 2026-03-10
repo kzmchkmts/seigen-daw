@@ -122,11 +122,13 @@ position: absolute;
 
 
 #bone-8{
+  opacity: 0;
   position: absolute;
-  left: 50%;
+  left: 44%;
   bottom: 2650px;
   transform: translateX(0px);
-  width: 200px;
+  width: 250px;
+  
 }
 
 
@@ -164,6 +166,10 @@ svg.bone {
 }
 
 .bone.assigned path {
+  fill: red;
+}
+
+#bone-8 path {
   fill: red;
 }
 
