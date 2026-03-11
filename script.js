@@ -41,6 +41,8 @@ let playbackTimer = null;
 
 let uiLocked = false;
 
+let glitchStep = 0;
+
 // --- Recording ---
 let micStream = null;
 let mediaRecorder = null;
@@ -268,7 +270,7 @@ function checkPlaybackReady() {
   if (Object.values(boneAssignments).every(Boolean)) {
     const playBtn = $("play-button");
     playBtn.classList.remove("hidden");
-    playBtn.textContent = "▶ 再生を開始";
+    playBtn.textContent = "▶Start playback and recording";
   }
 }
 
@@ -366,7 +368,7 @@ async function startPlaybackAndRecording() {
   }
 
   // UI完全ロック（録音中表示で覆う）
-  lockUIWithOverlay("録音中です（5分間）", "ページを閉じないでください");
+  lockUIWithOverlay("録音中です（5分間）", "ページを閉じないでください","Recording in progress (5 minutes)“,”Please do not close the page");
 
   // 1) 録音開始（許可ダイアログもここで出る）
   await startRecording();
@@ -382,6 +384,10 @@ async function startPlaybackAndRecording() {
   // 3) 5分後に停止（停止操作は提供しない）
   if (playbackTimer) clearTimeout(playbackTimer);
   playbackTimer = setTimeout(stopPlaybackAndRecording, FIXED_MS);
+
+
+
+  
 }
 
 async function startRecording() {
@@ -413,8 +419,7 @@ async function startRecording() {
     const type = recordedMime || "audio/webm";
     recordedBlob = new Blob(recordedChunks, { type });
 
-  // ★ この1行だけ追加
-  saveBlobLocally(recordedBlob, recordedExt);
+
 
     // マイク停止（LED/許可表示を消す）
     try {
@@ -428,6 +433,10 @@ async function startRecording() {
   // timesliceを指定するとデータが分割で来て扱いやすいことがある
   // （ただし挙動がブラウザ差あるので最小）
   mediaRecorder.start();
+
+
+startAudioAnalysis(micStream);
+
 }
 
 function stopPlaybackAndRecording() {
@@ -447,6 +456,191 @@ function stopPlaybackAndRecording() {
     showMetaForm();
   }
 }
+
+
+
+
+
+
+
+
+let analyser;
+let audioData;
+let audioCtx;
+
+const pathPositions = {};
+const pathVelocities = {};
+const pathRotation = {};
+const startTime = Date.now();
+
+function startAudioAnalysis(stream){
+
+  audioCtx = new AudioContext();
+
+  const source = audioCtx.createMediaStreamSource(stream);
+
+  analyser = audioCtx.createAnalyser();
+  analyser.fftSize = 256;
+
+  source.connect(analyser);
+
+  audioData = new Uint8Array(analyser.frequencyBinCount);
+
+  requestAnimationFrame(updateAudioGlitch);
+}
+
+
+
+
+
+function updateAudioGlitch(){
+
+  if(!analyser) return;
+
+  analyser.getByteFrequencyData(audioData);
+
+  let volume = 0;
+
+  for(let i=0;i<audioData.length;i++){
+    volume += audioData[i];
+  }
+
+  volume /= audioData.length;
+
+  triggerBoneGlitch(volume);
+
+  requestAnimationFrame(updateAudioGlitch);
+}
+
+
+
+
+
+
+
+
+function triggerBoneGlitch(volume){
+
+  glitchStep++;
+
+  if(glitchStep % 10 !== 0) return;
+
+  if(volume < 20) return;
+
+  const paths = document.querySelectorAll(".bone path");
+
+  paths.forEach((p,i)=>{
+
+    const bone = p.closest(".bone");
+    if(bone && bone.id === "bone-8") return;
+
+    if(!pathPositions[i]){
+      pathPositions[i] = {x:0,y:0};
+      pathVelocities[i] = {x:0,y:0};
+    }
+
+    pathVelocities[i].x += (Math.random()-0.5) * volume * 0.01;
+    pathVelocities[i].y += (Math.random()-0.5) * volume * 0.01;
+
+    if(Math.random() < 0.2){
+
+  pathVelocities[i].x *= -1.1;
+  pathVelocities[i].y *= -1.1;
+
+}
+
+    pathVelocities[i].x *= 0.98;
+    pathVelocities[i].y *= 0.98;
+
+    pathPositions[i].x += pathVelocities[i].x;
+    pathPositions[i].y += pathVelocities[i].y;
+
+    const r = (Math.random()-0.5)*volume;
+
+    p.style.transform =
+      `translate(${pathPositions[i].x}px, ${pathPositions[i].y}px)`;
+
+    p.style.transformOrigin = "center";
+    p.style.transformBox = "fill-box";
+
+  });
+
+}
+
+
+
+
+
+function breakBonePieces(volume){
+
+  if(Math.random() > 0.5) return;
+
+  const bones = document.querySelectorAll(".bone");
+
+  const bone = bones[Math.floor(Math.random()*bones.length)];
+
+  if(bone.id === "bone-8") return;
+
+  const paths = bone.querySelectorAll("path");
+
+  if(paths.length === 0) return;
+
+  const part = paths[Math.floor(Math.random()*paths.length)];
+
+  const clone = part.cloneNode(true);
+
+  const rect = part.getBoundingClientRect();
+
+  const svg = document.createElementNS("http://www.w3.org/2000/svg","svg");
+
+  svg.style.position = "fixed";
+  svg.style.left = rect.left + "px";
+  svg.style.top = rect.top + "px";
+  svg.style.width = rect.width + "px";
+  svg.style.height = rect.height + "px";
+  svg.style.pointerEvents = "none";
+
+  svg.appendChild(clone);
+
+  document.body.appendChild(svg);
+
+  const x = (Math.random()-0.5)*window.innerWidth;
+  const y = (Math.random()-0.5)*window.innerHeight;
+  const r = (Math.random()-0.5)*720;
+  const s = Math.random()*2+0.5;
+
+  svg.style.transition = "transform 2s ease-out, opacity 2s";
+
+  requestAnimationFrame(()=>{
+
+    svg.style.transform =
+      `translate(${x}px,${y}px) rotate(${r}deg) scale(${s})`;
+
+    svg.style.opacity = 0;
+
+  });
+
+  setTimeout(()=>{
+
+    svg.remove();
+
+  },2000);
+
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 /* =========================
    META FORM
@@ -522,7 +716,7 @@ xhr.open(
     if (xhr.status >= 200 && xhr.status < 300) {
       if (status) status.textContent = "アップロード完了";
       // 完了後遷移（まだ作らないなら仮でOK）
-      window.location.href = "/complete.html";
+      window.location.href = "./complete.html";
     } else {
       console.error(xhr.responseText);
       if (status) status.textContent = "アップロードに失敗しました。";
