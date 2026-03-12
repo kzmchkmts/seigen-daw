@@ -21,7 +21,11 @@ body {
   font-family: sans-serif;
   background: #ffffff;
   color: #000;
-    -webkit-text-size-adjust:100%;
+
+  -webkit-text-size-adjust:100%;
+  overflow-y:auto;
+
+  min-height:100dvh;
 }
 
 h1 {
