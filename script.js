@@ -52,7 +52,7 @@ let recordedMime = "";
 let recordedExt = "webm"; // default
 
 // 5min fixed
-const FIXED_MS = 10000; // 5分
+const FIXED_MS = 300000; // 5分
 
 /* =========================
    DOM HELPERS
