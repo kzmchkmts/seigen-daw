@@ -52,7 +52,7 @@ let recordedMime = "";
 let recordedExt = "webm"; // default
 
 // 5min fixed
-const FIXED_MS = 300000; // 5分
+const FIXED_MS = 10000; // 5分
 
 /* =========================
    DOM HELPERS
@@ -911,11 +911,50 @@ document.addEventListener("DOMContentLoaded", function(){
 
   });
 
-  enterButton.onclick = function(){
-    introModal.style.display = "none";
-  };
+enterButton.onclick = function(){
+
+  introModal.style.display = "none";
+
+  const hint = document.getElementById("hintText");
+
+  setTimeout(()=>{
+    hint.style.opacity = "1";
+  },400);
+
+  setTimeout(()=>{
+    hint.style.opacity = "0";
+  },4000);
+
+
+ const bones = [
+  "bone-1",
+  "bone-2",
+  "bone-3",
+  "bone-4",
+  "bone-5",
+  "bone-6",
+  "bone-7"
+];
+
+bones.forEach((id, index)=>{
+
+  setTimeout(()=>{
+
+    const bone = document.getElementById(id);
+
+    if(bone){
+      bone.classList.add("boneHint");
+    }
+
+  }, 600 + index * 150);
 
 });
+
+};
+
+});
+
+
 
 document.addEventListener("click", function(){
 
@@ -928,4 +967,63 @@ document.addEventListener("click", function(){
   }
 
 });
+
+
+
+
+
+const hint = document.getElementById("hintText");
+
+enterButton.onclick = function(){
+
+  introModal.style.display = "none";
+
+  setTimeout(()=>{
+    hint.style.opacity = 1;
+  },500);
+
+  setTimeout(()=>{
+    hint.style.opacity = 0;
+  },3500);
+
+};
+
+
+
+metaName.value = metaName.value.replace(/[^a-zA-Z ]/g,"");
+
+
+
+const nameInput = document.getElementById("meta-name");
+
+nameInput.addEventListener("input", function(){
+
+  const value = nameInput.value;
+
+  if(/[ぁ-んァ-ン一-龥]/.test(value)){
+    alert("半角英数字で入力してください Please use alphabet characters only.");
+    nameInput.value = value.replace(/[ぁ-んァ-ン一-龥]/g,"");
+  }
+
+});
+
+
+
+document.getElementById("bone-index-content")
+.addEventListener("click", function(e){
+
+const line = e.target.innerText;
+
+if(line.includes("—")){
+
+const boneName = line.split("—")[0].trim();
+
+document.getElementById("meta-bone").value = boneName;
+
+}
+
+});
+
+
+
 
