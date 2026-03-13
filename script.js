@@ -8,7 +8,7 @@ const audioBank = [
   { id: "OsakaNakatsu_weather_zekkotsu_20250427", file: "audio/OsakaNakatsu_weather_zekkotsu_20250427.mp3" },
   { id: "ChofushiSengawa_reiji_senkotsu_unknown", file: "audio/ChofushiSengawa_reiji_senkotsu.mp3" },
   { id: "Nerimaku_kuko_zentoukotsu_20250202", file: "audio/Nerimaku_kuko_zentoukotsu_20250202.mp3" },
-  { id: "Shimokyoku_Tachibana_sekitsuikotsu_20250201 ", file: "audio/shimokyoku_Tachibana_sekitsuikotsu_20250201 .mp3" },
+  { id: "Shimokyoku_Tachibana_sekitsuikotsu_20250201", file: "audio/shimokyoku_Tachibana_sekitsuikotsu_20250201.mp3" },
   { id: "Shizuokakengotenbashi_hozuku_hidarikoyubi_20250131", file: "audio/Shizuokakengotenbashi_hozuku_hidarikoyubi_20250131.mp3" },
   { id: "TokyoKitakuAkabanekita_Nozomu_Rokkotu_20250427", file: "audio/TokyoKitakuAkabanekita_Nozomu_Rokkotu_20250427.mp3" }
 ];
@@ -170,7 +170,7 @@ function openAudioPanel() {
   const list = $("audio-list");
   const title = $("audio-panel-title");
 
-  title.textContent = `SELECT AUDIO --- (10 sec preview) (${selectedBone})`;
+  title.textContent = `SELECT AUDIO --- (30 sec preview) (${selectedBone})`;
   list.innerHTML = "";
 
   audioBank.forEach(audio => {
@@ -187,11 +187,16 @@ function openAudioPanel() {
     previewBtn.textContent = "▶︎ preview";
     previewBtn.onclick = () => playPreview(audio);
 
+    const stopBtn = document.createElement("button");
+    stopBtn.textContent = "■ stop";
+    stopBtn.onclick = () => stopPreview();
+
     const assignBtn = document.createElement("button");
     assignBtn.textContent = "✔ assign";
     assignBtn.onclick = () => assignAudioToBone(selectedBone, audio);
 
     controls.appendChild(previewBtn);
+    controls.appendChild(stopBtn);
     controls.appendChild(assignBtn);
 
     li.appendChild(label);
@@ -225,7 +230,7 @@ function playPreview(audio) {
   previewAudio = new Audio(audio.file);
   previewAudio.currentTime = 0;
   previewAudio.play().catch(() => {});
-  previewTimer = setTimeout(stopPreview, 10000);
+  previewTimer = setTimeout(stopPreview, 30000);
 }
 
 function stopPreview() {
@@ -842,7 +847,7 @@ function startHeadEmergence() {
 const introMessage =
 `このDAWインターフェースはユーザーの身体を用いて声を通過・録音・収集するための儀礼装置です。
 表示される７つの骨の各部位をクリックし、オーディオパネルから任意のファイルをアサインしてください。
-各オーディオファイルは10秒間のプレビューが可能です。
+各オーディオファイルは30秒間のプレビューが可能です。
 全ての部位にオーディオアサインが完了しましたら、録音と再生が同時に開始できるようになります。
 録音と再生は5分間です。録音中はアサインした７つの音源がいっせいに再生されます。
 必ずヘッドフォンやイヤフォンで、できる限り大きな音量で再生してください。
