@@ -18,7 +18,7 @@ html, body {
 
 body {
   margin: 0;
-  font-family: sans-serif;
+  font-family: "Courier New", monospace;
   background: #ffffff;
   color: #000;
 
@@ -31,6 +31,26 @@ body {
 h1 {
   display: none;
 }
+
+
+
+#machine-title{
+
+position:fixed;
+
+top:18px;
+left:20px;
+
+font-family: "Courier New", monospace;
+font-size:20px;
+letter-spacing:0.15em;
+
+color:#111;
+
+user-select:none;
+
+}
+
 
 
 /* =========================
@@ -265,7 +285,8 @@ cursor:pointer;
   overflow-y: auto;              /* ← 追加 */
   -webkit-overflow-scrolling: touch;        /* 外ははみ出さない */
 
-  background: rgba(0,0,0,0.85);
+  backdrop-filter: blur(6px);
+  background: rgba(0,0,0,0.75);
   color: white;
   padding: 12px;
   border-radius: 6px;
@@ -658,6 +679,36 @@ overflow:visible;
 }
 
 
+
+
+@media (max-width: 700px){
+
+#audio-panel{
+
+width:50vw;
+max-height:70vh;
+
+padding:18px;
+
+font-size:14px;
+
+}
+
+#audio-panel-title{
+font-size:16px;
+}
+
+#audio-list li{
+margin-bottom:16px;
+}
+
+.audio-controls button{
+font-size:12px;
+padding:4px 8px;
+
+}
+
+}
 
 /*
 svg.bone {
