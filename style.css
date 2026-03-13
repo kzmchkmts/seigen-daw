@@ -279,14 +279,14 @@ cursor:pointer;
   position: fixed;
   right: 20px;
   bottom: 20px;
-
-  width: 320px;
+  font-size: 15;
+  width: 400px;
   max-height: 65vh;          /* ← 画面の6割まで */
   overflow-y: auto;              /* ← 追加 */
   -webkit-overflow-scrolling: touch;        /* 外ははみ出さない */
 
   backdrop-filter: blur(6px);
-  background: rgba(0,0,0,0.75);
+  background: rgba(0,0,0,0.65);
   color: white;
   padding: 12px;
   border-radius: 6px;
@@ -305,8 +305,9 @@ cursor:pointer;
 }
 
 #audio-list li {
-  border-bottom: 1px solid #444;
-  padding: 6px 0;
+  border-bottom:1px solid rgba(255,255,255,0.35);
+padding-bottom:12px;
+margin-bottom:12px;
 }
 
 .audio-id {
@@ -317,6 +318,10 @@ cursor:pointer;
 
 .audio-controls button {
   margin-right: 6px;
+  font-size:11px;
+  padding:3px 6px;
+  border-radius:6px;
+  gap:6px;
 }
 
 
@@ -685,11 +690,9 @@ overflow:visible;
 
 #audio-panel{
 
-width:50vw;
+width:60vw;
 max-height:70vh;
-
-padding:18px;
-
+padding:10px;
 font-size:14px;
 
 }
@@ -699,12 +702,16 @@ font-size:16px;
 }
 
 #audio-list li{
-margin-bottom:16px;
+border-bottom:1px solid rgba(255,255,255,0.35);
+padding-bottom:12px;
+margin-bottom:12px;
 }
 
 .audio-controls button{
-font-size:12px;
-padding:4px 8px;
+  font-size:10px;
+  padding:4px 4px;
+  border-radius:6px;
+  gap:2px;
 
 }
 
